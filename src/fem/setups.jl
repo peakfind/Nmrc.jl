@@ -32,7 +32,7 @@ Generate a mesh by julia interface for Gmsh and read the `.msh` file by `Ferrite
 
 - We can generate a `*.vtk` file by replace the `do end` block with `gmsh.write(*.vtk)`
 """
-function setup_grid(;d=2π, ĥ=1.1, δ=0.5, lc=0.5, vtk=false)
+#= function setup_grid(;d=2π, ĥ=1.1, δ=0.5, lc=0.5, vtk=false)
     # Initialize Gmsh
     gmsh.initialize()
     gmsh.option.setNumber("General.Verbosity", 2)
@@ -88,8 +88,8 @@ function setup_grid(;d=2π, ĥ=1.1, δ=0.5, lc=0.5, vtk=false)
     gmsh.finalize()
     return grid
 end
-
-function setup_grid(;d=2π, ĥ=1.1, δ=0.5, lc=0.5, lp=0.5, vtk=false)
+ =#
+function setup_grid(;d=2π, ĥ=1.5, δ=2.0, lc=0.5, lp=0.5, vtk=false)
     # Initialize Gmsh
     gmsh.initialize()
     gmsh.option.setNumber("General.Verbosity", 2)
