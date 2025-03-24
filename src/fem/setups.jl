@@ -89,6 +89,7 @@ Generate a mesh by julia interface for Gmsh and read the `.msh` file by `Ferrite
     return grid
 end
  =#
+ 
 function setup_grid(;d=2π, ĥ=1.5, δ=2.0, lc=0.5, lp=0.5, vtk=false)
     # Initialize Gmsh
     gmsh.initialize()

@@ -15,7 +15,6 @@ end
 #     return PML(ρ, χ, m, start, δ)
 # end
 
-
 """
     get_width(p::PML)
 
