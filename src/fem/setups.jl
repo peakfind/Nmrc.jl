@@ -1,95 +1,43 @@
 # Basic setup functions to use Ferrite.jl
 
 """
-    setup_grid(;d=2π, ĥ=1.1, δ=0.5, lc=0.5)
+    setup_grid(;d=2π, ĥ=1.5, δ=2.0, lc=0.5, lp=0.5, vtk=false)
 
-Generate a mesh by julia interface for Gmsh and read the `.msh` file by `FerriteGmsh`
+Generate a mesh by julia interface for Gmsh and read the `.msh` file by `FerriteGmsh`.
 
 # Arguments
 
 - `d`: the period of the periodic layer
-- `h₀`: the start of the PML layer
+- `ĥ`: the start of the PML layer
 - `δ`: the height of the PML layer
-- `lc`: target mesh size close to the point
+- `lc`: mesh size near the periodic layer
+- `lp`: mesh size in the PML layer
+- `vtk`: write `.vtk` file, default is `false`
 
 # Points
 
 ```
- 4  -------------  3
- |                 |
- 1  -------------  2
+ 5 ------------- 4
+ |               |
+ 6               3
+ |               |
+ 1 ------------- 2
 ```
 
 # Lines
 
 ```
- .  ----  3  ----  .
- 4                 2 
- .  ----  1  ----  .
+ . ----- l4 ----- . 
+ l5               l3
+ .                .
+ l6               l2 
+ . ----- l1 ----- .
 ```
 
 # Misc 
 
 - We can generate a `*.vtk` file by replace the `do end` block with `gmsh.write(*.vtk)`
 """
-#= function setup_grid(;d=2π, ĥ=1.1, δ=0.5, lc=0.5, vtk=false)
-    # Initialize Gmsh
-    gmsh.initialize()
-    gmsh.option.setNumber("General.Verbosity", 2)
-
-    # Compute the height of the truncated domain
-    b = ĥ + δ
-
-    # Add the points
-    p1 = gmsh.model.geo.addPoint(0, 0, 0, lc)
-    p2 = gmsh.model.geo.addPoint(d, 0, 0, lc)
-    p3 = gmsh.model.geo.addPoint(d, b, 0, lc) 
-    p4 = gmsh.model.geo.addPoint(0, b, 0, lc)
-
-    # Add the lines
-    l1 = gmsh.model.geo.addLine(p1, p2)
-    l2 = gmsh.model.geo.addLine(p2, p3)
-    l3 = gmsh.model.geo.addLine(p3, p4)
-    l4 = gmsh.model.geo.addLine(p4, p1)
-
-    # Add the loop and the surface
-    loop = gmsh.model.geo.addCurveLoop([l1, l2, l3, l4])
-    surf = gmsh.model.geo.addPlaneSurface([loop])
-
-    # Synchronize the model
-    gmsh.model.geo.synchronize()
-
-    # Create the Physical Groups
-    gmsh.model.addPhysicalGroup(1, [l1], -1, "bottom")
-    gmsh.model.addPhysicalGroup(1, [l2], -1, "right")
-    gmsh.model.addPhysicalGroup(1, [l3], -1, "top")
-    gmsh.model.addPhysicalGroup(1, [l4], -1, "left")
-    gmsh.model.addPhysicalGroup(2, [surf], -1, "Ω")
-
-    # Set periodic mesh
-    transform = [1, 0, 0, d, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
-    gmsh.model.mesh.setPeriodic(1, [l2], [l4], transform)
-
-    # Generate a 2D mesh
-    gmsh.model.mesh.generate(2)
-
-    grid = mktempdir() do dir
-        path = joinpath(dir, "mesh.msh")
-        gmsh.write(path)
-        togrid(path) 
-    end
-
-    if vtk 
-        path = joinpath(pwd(), "mesh.vtk")
-        gmsh.write(path)
-    end
-
-    # Finalize the Gmsh library
-    gmsh.finalize()
-    return grid
-end
- =#
- 
 function setup_grid(;d=2π, ĥ=1.5, δ=2.0, lc=0.5, lp=0.5, vtk=false)
     # Initialize Gmsh
     gmsh.initialize()
@@ -211,9 +159,9 @@ function allocate_matrices(dof::DofHandler, cst::ConstraintHandler)
 end
 
 """
-    assemble_A2(cv, dh, A₂, p)
+    assemble_A2(cv::CellValues, dh::DofHandler, A₂::SparseMatrixCSC, p::PML)
 
-The second order term in the quadratic eigenvalue problem
+Assemble the second order term in the quadratic eigenvalue problem.
 """
 function assemble_A2(cv::CellValues, dh::DofHandler, A₂::SparseMatrixCSC, p::PML)
     # Allocate the local stiffness matrix
@@ -256,9 +204,9 @@ function assemble_A2(cv::CellValues, dh::DofHandler, A₂::SparseMatrixCSC, p::P
 end
 
 """
-    assemble_A1(cv, dh, A₁, p)
+    assemble_A1(cv::CellValues, dh::DofHandler, A₁::SparseMatrixCSC, p::PML)
 
-The first order term in the quadratic eigenvalue problem
+Assemble the first order term in the quadratic eigenvalue problem.
 """
 function assemble_A1(cv::CellValues, dh::DofHandler, A₁::SparseMatrixCSC, p::PML)
     # Allocate the local stiffness matrix
@@ -303,7 +251,7 @@ end
 """
     assemble_A0(cv, dh, A₀, medium, p, k)
 
-The zero order term in the quadratic eigenvalue problem
+Assemble the zero order term in the quadratic eigenvalue problem.
 """
 function assemble_A0(cv::CellValues, dh::DofHandler, A₀::SparseMatrixCSC, medium::Function, p::PML, k)
     # Allocate the local stiffness matrix
@@ -349,10 +297,16 @@ function assemble_A0(cv::CellValues, dh::DofHandler, A₀::SparseMatrixCSC, medi
     return A₀ 
 end
 
+
+"""
+    apply_all_bds!(K::Union{SparseMatrixCSC, Symmetric}, ch::ConstraintHandler)
+    apply_all_bds!(KK::Union{SparseMatrixCSC, Symmetric}, f::AbstractVector, ch::ConstraintHandler, applyzero::Bool = false)
+
+Impose the periodic boundary condition and the Dirichlet boundary condition on the matrices.
+"""
 function apply_all_bds!(K::Union{SparseMatrixCSC, Symmetric}, ch::ConstraintHandler)
     return apply_all_bds!(K, eltype(K)[], ch, true)
 end
-
 
 function apply_all_bds!(KK::Union{SparseMatrixCSC, Symmetric}, f::AbstractVector, ch::ConstraintHandler, applyzero::Bool = false)
     @assert Ferrite.isclosed(ch)
@@ -421,14 +375,4 @@ function apply_all_bds!(KK::Union{SparseMatrixCSC, Symmetric}, f::AbstractVector
         end
     end
     return
-end
-
-"""
-    solve_qm(cv::CellValues, dof::DofHandler, cst::ConstraintHandler, A₀::SparseMatrixCSC, A₁::SparseMatrixCSC, A₂::SparseMatrixCSC)
-
-Get the exceptional values (quasi-momentum α) by solving the eigenvalue 
-problems generated by FEM.
-"""
-function solve_qm(cv::CellValues, dof::DofHandler, cst::ConstraintHandler, A₀::SparseMatrixCSC, A₁::SparseMatrixCSC, A₂::SparseMatrixCSC)
-    
 end

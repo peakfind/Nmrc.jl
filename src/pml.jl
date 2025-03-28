@@ -11,10 +11,6 @@ struct PML
     δ::Float64
 end
 
-# function PML(ρ, χ, m, start, δ)
-#     return PML(ρ, χ, m, start, δ)
-# end
-
 """
     get_width(p::PML)
 
