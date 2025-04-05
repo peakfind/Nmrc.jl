@@ -86,30 +86,37 @@ integral on the boundary.
 """
 function setup_vals(ip)
     qr = QuadratureRule{RefTriangle}(2)
-    qr_facet = FacetQuadratureRule{RefTriangle}(10)
+    qr_facet = FacetQuadratureRule{RefTriangle}(2)
     cv = CellValues(qr, ip)
     fv = FacetValues(qr_facet, ip)
     
     return cv, fv
 end
 
+function setup_dh(grid::Grid, ip)
+    dh = DofHandler(grid)
+    add!(dh, :u, ip)
+    close!(dh)
+    
+    return dh
+end
 
 """
-    setup_bcs(dof::DofHandler)
+    setup_bcs(dh::DofHandler)
 
 Set the periodic boundary condition ("left" and "right") and 
 Dirichelt boundary condition ("bottom").
 """
-function setup_bcs(dof::DofHandler)
-    cst = ConstraintHandler(dof)
+function setup_bcs(dh::DofHandler)
+    cst = ConstraintHandler(dh)
     
     # Periodic boundary condition
-    pfacets = collect_periodic_facets(dof.grid, "right", "left", x -> x + Vec{2}((2π, 0.0)))
+    pfacets = collect_periodic_facets(dh.grid, "right", "left", x -> x + Vec{2}((2π, 0.0)))
     pbc = PeriodicDirichlet(:u, pfacets)
     add!(cst, pbc)
     
     # Dirichlet boundary condition
-    dbc = Dirichlet(:u, getfacetset(dof.grid, "bottom"), x -> 0)
+    dbc = Dirichlet(:u, getfacetset(dh.grid, "bottom"), x -> 0)
     add!(cst, dbc)
     
     close!(cst)
@@ -117,13 +124,13 @@ function setup_bcs(dof::DofHandler)
 end
 
 """
-    dofs_on_dtn(dof::DofHandler, field::Symbol, facetset)
+    dofs_on_dtn(dh::DofHandler, field::Symbol, facetset)
 
 Extract the global indices of Dofs associated to the artificial boundary.
 """
-function dofs_on_dtn(dof::DofHandler, field::Symbol, facetset)
+function dofs_on_dtn(dh::DofHandler, field::Symbol, facetset)
     # TODO: Maybe find a more natural way to extract the Dofs associated to the artificial boundary
-    dtn_ch = ConstraintHandler(dof)
+    dtn_ch = ConstraintHandler(dh)
     dbc = Dirichlet(field, facetset, x -> 0)
     add!(dtn_ch, dbc)
     close!(dtn_ch)
@@ -132,23 +139,23 @@ function dofs_on_dtn(dof::DofHandler, field::Symbol, facetset)
 end
 
 """
-    allocate_stiff_matrix(dof::DofHandler, cst::ConstraintHandler, dofsDtN)
+    allocate_stiff_matrix(dofhandler::DofHandler, csthandler::ConstraintHandler, dofs)
 
 Create a sparse pattern for the stiffness matrix. We need to add extra entries 
 due to the DtN map by hand.
 """
-function allocate_stiff_matrix(dof::DofHandler, cst::ConstraintHandler, dofsDtN)
-    sp = init_sparsity_pattern(dof)
-    add_cell_entries!(sp, dof)
-    
-    # Use `add_entry!` for DtN term
+function allocate_stiff_matrix(dh::DofHandler, cst::ConstraintHandler, dofsDtN)
+    sp = init_sparsity_pattern(dh)
+    add_cell_entries!(sp, dh)
+    # Use add_entry! for DtN term
     for i in dofsDtN, j in dofsDtN
-        Ferrite.add_entry!(sp, i, j)
+        # if abs(i - j) > 1
+            Ferrite.add_entry!(sp, i, j)
+        # end
     end
-    
+
     add_constraint_entries!(sp, cst)
-    K = allocate_matrix(SparseMatrixCSC{ComplexF64, Int64}, sp)
-    
+    K = allocate_matrix(SparseMatrixCSC{ComplexF64, Int}, sp)
     return K
 end
 
@@ -216,7 +223,7 @@ function assemble_load(fv::FacetValues, dh::DofHandler, facetset, f, inc::Incide
     
     # Loop over all facets on the specific facetset
     for facet in FacetIterator(dh, facetset)
-        # Update the fv to the correct facet
+        # Update the fv to the current facet
         reinit!(fv, facet)
         
         # Reset the local vector fe to zero
@@ -248,27 +255,30 @@ end
 
 Assemble the TBC matrix.
 """
-function assemble_tbc(fv::FacetValues, dh::DofHandler, inc::Incident, F::SparseMatrixCSC, facetset, N, dofsDtN)
-    # Allocate the vector Θ
+function assemble_tbc(fv::FacetValues, dh::DofHandler, inc::Incident, facetset, F, N, dofsDtN)
+    # Allocate the vector Θ 
     Θ = sparsevec(dofsDtN, zeros(ComplexF64, length(dofsDtN)), ndofs(dh))
-    
+
     # Loop over truncated terms
     for n in -N:N 
         # Reset the vector Θ to zero
         fill!(Θ, 0.0 + 0.0im)
-        
-        # Compute βₙ 
+
+        # Compute βₙ
         βₙ = beta_n(inc, n)
+
+        # Compute the vector Θ (Fourier coefficients and its conjugate) 
+        compute_coef!(fv, dh, facetset, Θ, n)
         
-        # Compute the vecotr Θ (Fourier coefficients and its conjugate)
-        compute_coef!(fv, dh, Θ, facetset, n)
-        
-        # Assemble the TBC matrix
+        # Assemble the TBC matrix 
         for i in Θ.nzind, j in Θ.nzind
             v = im * βₙ * Θ[i] * conj(Θ[j])/(2π)
             Ferrite.addindex!(F, v, i, j)
         end
     end
+    
+    # TODO: find a way to avoid compute im/2π in the above iteration
+    # F .*= im/(2π)
     
     return F
 end
@@ -279,7 +289,7 @@ end
 Compute Θⁿ on the `facetset`. Actually the computation of the TBC matrix reduces 
 to the computation of the vector Θⁿ.
 """
-function compute_coef!(fv::FacetValues, dh::DofHandler, Θ::SparseVector, facetset, n)
+function compute_coef!(fv::FacetValues, dh::DofHandler, facetset, Θ::SparseVector, n)
     # Allocate the local vector θ
     n_basefuncs = getnbasefunctions(fv)
     θ = zeros(ComplexF64, n_basefuncs)
@@ -289,7 +299,7 @@ function compute_coef!(fv::FacetValues, dh::DofHandler, Θ::SparseVector, facets
         # Update the fv to the correct facet
         reinit!(fv, facet)
         
-        # Reset the local vector θ to zero 
+        # Reset the local vector θ to zero
         fill!(θ, 0.0 + 0.0im)
         
         coords = getcoordinates(facet)
@@ -298,7 +308,7 @@ function compute_coef!(fv::FacetValues, dh::DofHandler, Θ::SparseVector, facets
         for qp in 1:getnquadpoints(fv)
             ds = getdetJdV(fv, qp)
 
-            # Coordinate of the quadrature point 
+            # Coordinate of the quadrature point
             coords_qp = spatial_coordinate(fv, qp, coords)
             
             # Modes: eⁱⁿˣ
@@ -309,6 +319,7 @@ function compute_coef!(fv::FacetValues, dh::DofHandler, Θ::SparseVector, facets
                 θ[i] += ϕ * mode * ds
             end
         end
+        
         assemble!(Θ, celldofs(facet), θ)
     end
     

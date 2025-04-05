@@ -25,7 +25,7 @@ export assemble_A2, assemble_A1, assemble_A0, apply_all_bds!
 
 include("fem/dtn.jl")
 export periodic_cell
-export setup_vals
+export setup_vals, setup_dh
 export dofs_on_dtn, setup_bcs, allocate_stiff_matrix
 export assemble_A, assemble_load, assemble_tbc
 export sub_preserve_structure

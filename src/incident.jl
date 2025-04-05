@@ -47,7 +47,9 @@ end
 Compute the `βₙ`.
 """
 function beta_n(inc::Incident, n)
-    αₙ = inc.α + n
+    k = get_wavenumber(inc)
+    α = get_alpha(inc)
+    αₙ = α + n
     
     if k > abs(αₙ)
         βₙ = complex(sqrt(k^2 - αₙ^2))
