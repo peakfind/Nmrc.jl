@@ -29,6 +29,10 @@ function Incident(k::Float64, θ::Float64)
     return Incident(k, θ, α, β)
 end
 
+function get_wavenumber(inc::Incident)
+    return inc.k    
+end
+
 function get_alpha(inc::Incident)
     return inc.α
 end

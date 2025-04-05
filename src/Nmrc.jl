@@ -13,7 +13,9 @@ export PML, get_width, coord_transform
 
 # Incident plane wave
 include("incident.jl")
-export Incident, get_alpha, get_beta, beta_n
+export Incident
+export get_wavenumber, get_alpha, get_beta
+export beta_n
 
 # FEM routines
 include("fem/setups.jl")

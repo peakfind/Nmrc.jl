@@ -157,6 +157,7 @@ end
 
 """
 function assemble_A(cv::CellValues, dh::DofHandler, A::SparseMatrixCSC, inc::Incident)
+    k = get_wavenumber(inc)
     α = get_alpha(inc)
     
     # Allocate the local stiffness matrix
