@@ -1,11 +1,10 @@
-cd(@__DIR__)
 using Nmrc
 using Documenter
 using Literate
 
 DocMeta.setdocmeta!(Nmrc, :DocTestSetup, :(using Nmrc); recursive=true)
 
-Literate.markdown(joinpath(@__DIR__, "src", "flat.jl"), joinpath(@__DIR__, "src"))
+Literate.markdown("src/literate/flat.jl", "src/")
 
 makedocs(;
     modules=[Nmrc],
