@@ -4,7 +4,9 @@ using Literate
 
 DocMeta.setdocmeta!(Nmrc, :DocTestSetup, :(using Nmrc); recursive=true)
 
-Literate.markdown("src/literate/flat.jl", "src/")
+source_path = joinpath(@__DIR__, "src", "literate", "flat.jl")
+output_path = joinpath(@__DIR__, "src")
+Literate.markdown(source_path, output_path)
 
 makedocs(;
     modules=[Nmrc],
