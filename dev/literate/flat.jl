@@ -2,6 +2,20 @@
 
 # ## Introduction
 
+# Consider a flat surface illuminated by a plane wave. The incident field is given by 
+# ```math
+# u^{\text{in}} = e^{i\alpha x_{1} - i\beta x_{2}},
+# ```
+# where $\alpha = k\sin\theta, \beta = k\cos\theta$; $k > 0$ is the wave number, 
+# and $\theta \in (-\pi/2, \pi/2)$ is the incident angle. We assume that the total 
+# field $u = u^{\test{in}} + u^{\text{sc}}$, composed of the incident field 
+# $u^{\test{in}}$ and the scattered field $u^{\text{sc}}$, satisfies the Dirichelt 
+# boundary condition on the bottom $x_{2} = 0$.
+
+# Due to the periodic structure and incident plane wave, we can work on periodic 
+# function space, that is, $v = ue^{-i\alpha x_{1}}$. So the exact solution is 
+# $v_{\text{exact}} = -2i\sin(\beta x_{2})$.
+
 # ## Numerical examples
 
 # First, we load Nmrc and Ferrite (Ferrite is used to define the interpolation).
@@ -17,10 +31,10 @@ k = 1.0
 inc = Incident(k, θ)
 
 ## Number of the truncated terms
-N = 10
+N = 10;
 
 ## Height of the artificial boundary
-height = 2.0
+height = 2.0;
 
 # ### Generating a mesh by Gmsh
 
@@ -51,34 +65,32 @@ cst = setup_bcs(dh)
 
 # We allocate the stiffness matrix $A$, the TBC matrix $F$ and the load vector 
 # $f$. Due to the DtN map, we need to extract the dofs associated to the artificial 
-# boundary. Then we create the sparse pattern of $A$ and $F$. For more details, 
-# please refer to 'allocate_stiff_matrix'.
+# boundary. 
 
 ## Extract dofs on the "top" boundary
 top = getfacetset(grid, "top")
 dofsDtN = dofs_on_dtn(dh, :u, top)
 
+# Then we create the sparse pattern of $A$ and $F$. For more details, please 
+# refer to [`allocate_stiff_matrix`](@ref).
+
 ## Allocate the stiffness matrix and the load vector
 A = allocate_stiff_matrix(dh, cst, dofsDtN)
 F = allocate_stiff_matrix(dh, cst, dofsDtN)
-f = zeros(ComplexF64, ndofs(dh))
-
-# The matrix $A$ comes from 
-# ```math
-#   \int dx.
-# ```
-## Assemble the matrix A
-A = assemble_A(cv, dh, A, inc)
+f = zeros(ComplexF64, ndofs(dh));
 
 ## Assemble the load vector f
 f = assemble_load(fv, dh, top, f, inc, height)
+
+## Assemble the matrix A
+A = assemble_A(cv, dh, A, inc)
 
 ## Assemble the TBC matrix
 F = assemble_tbc(fv, dh, inc, top, F, N, dofsDtN)
 
 # Be careful! Calculations between two sparse matrices may destory the structure 
-# of sparse matrix. Then imposing the boundary condition may fail. So we use 
-# `sub_preserve_structure` to subtract $F$ from $A$ with keeping the 
+# of sparse matrices. Then imposing the boundary condition may fail. So we use 
+# [`sub_preserve_structure`](@ref) to subtract $F$ from $A$ with keeping the 
 # structure of $A$.
 
 ## Add the TBC matrix to A = A - F
@@ -89,6 +101,7 @@ apply!(A, f, cst)
 
 ## Solve the linear system
 u = A\f 
+
 ## Apply the boundary condition again
 apply!(u, cst)
 
