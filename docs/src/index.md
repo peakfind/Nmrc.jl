@@ -21,10 +21,3 @@ Nmrc.jl can be installed by opening a Julia REPL and typing:
 ## TBD
 
 1. High order quadrature rules on facets may change the sparse pattern of the vector $\Theta^n$.
-
-```@index
-```
-
-```@autodocs
-Modules = [Nmrc]
-```

@@ -1,7 +1,10 @@
 using Nmrc
 using Documenter
+using Literate
 
 DocMeta.setdocmeta!(Nmrc, :DocTestSetup, :(using Nmrc); recursive=true)
+
+Literate.markdown("src/literate/flat.jl", "src/")
 
 makedocs(;
     modules=[Nmrc],
@@ -14,6 +17,8 @@ makedocs(;
     ),
     pages=[
         "Home" => "index.md",
+        "Tutorials" => "flat.md",
+        "API" => "api.md",
     ],
 )
 
