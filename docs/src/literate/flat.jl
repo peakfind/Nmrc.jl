@@ -52,7 +52,7 @@ cst = setup_bcs(dh)
 # We allocate the stiffness matrix $A$, the TBC matrix $F$ and the load vector 
 # $f$. Due to the DtN map, we need to extract the dofs associated to the artificial 
 # boundary. Then we create the sparse pattern of $A$ and $F$. For more details, 
-# please refer to ['allocate_stiff_matrix'](@ref).
+# please refer to 'allocate_stiff_matrix'.
 
 ## Extract dofs on the "top" boundary
 top = getfacetset(grid, "top")
@@ -78,7 +78,7 @@ F = assemble_tbc(fv, dh, inc, top, F, N, dofsDtN)
 
 # Be careful! Calculations between two sparse matrices may destory the structure 
 # of sparse matrix. Then imposing the boundary condition may fail. So we use 
-# [`sub_preserve_structure`](@ref) to subtract $F$ from $A$ with keeping the 
+# `sub_preserve_structure` to subtract $F$ from $A$ with keeping the 
 # structure of $A$.
 
 ## Add the TBC matrix to A = A - F
