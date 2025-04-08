@@ -8,12 +8,12 @@
 # ```
 # where $\alpha = k\sin\theta, \beta = k\cos\theta$; $k > 0$ is the wave number, 
 # and $\theta \in (-\pi/2, \pi/2)$ is the incident angle. We assume that the total 
-# field $u = u^{\test{in}} + u^{\text{sc}}$, composed of the incident field 
-# $u^{\test{in}}$ and the scattered field $u^{\text{sc}}$, satisfies the Dirichelt 
+# field $u = u^{\text{in}} + u^{\text{sc}}$, composed of the incident field 
+# $u^{\text{in}}$ and the scattered field $u^{\text{sc}}$, satisfies the Dirichelt 
 # boundary condition on the bottom $x_{2} = 0$.
 
 # Due to the periodic structure and incident plane wave, we can work on periodic 
-# function space, that is, $v = ue^{-i\alpha x_{1}}$. So the exact solution is 
+# function space, that is, $v = e^{-i\alpha x_{1}}u$. So the exact solution is 
 # $v_{\text{exact}} = -2i\sin(\beta x_{2})$.
 
 # ## Numerical examples
