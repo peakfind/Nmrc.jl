@@ -1,13 +1,14 @@
 # Use Ferrite.jl to implement DtN-FEM
 
 """
-    periodic_cell(lc=0.5; height)
+    periodic_cell(;lc=0.5, period=2π, height=2.0)
 
-Generate a mesh for the periodic cell with period 2π and height `height`.
+Generate a mesh for the periodic cell.
 
 # Arguments
 
 - `lc`: the mesh size near points
+- `period`: the period of the periodic cell
 - `height`: the height of the periodic cell
 
 # Points
@@ -27,15 +28,15 @@ Generate a mesh for the periodic cell with period 2π and height `height`.
  . ---- l1 ---- .
 ```
 """
-function periodic_cell(lc=0.5; height)
+function periodic_cell(;lc=0.5, period=2π, height=2.0)
     # Initialize Gmsh
     gmsh.initialize()
     gmsh.option.setNumber("General.Verbosity", 2)
 
     # Add the points
     p1 = gmsh.model.geo.addPoint(0, 0, 0, lc)
-    p2 = gmsh.model.geo.addPoint(2π, 0, 0, lc)
-    p3 = gmsh.model.geo.addPoint(2π, height, 0, lc)
+    p2 = gmsh.model.geo.addPoint(period, 0, 0, lc)
+    p3 = gmsh.model.geo.addPoint(period, height, 0, lc)
     p4 = gmsh.model.geo.addPoint(0, height, 0, lc)
 
     # Add the lines
@@ -59,7 +60,7 @@ function periodic_cell(lc=0.5; height)
     gmsh.model.addPhysicalGroup(2, [surf], -1, "Ω")
 
     # Set Periodic boundary condition
-    gmsh.model.mesh.setPeriodic(1, [l2], [l4], [1, 0, 0, 2π, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1])
+    gmsh.model.mesh.setPeriodic(1, [l2], [l4], [1, 0, 0, period, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1])
 
     # Generate a 2D mesh
     gmsh.model.mesh.generate(2)
@@ -102,16 +103,21 @@ function setup_dh(grid::Grid, ip)
 end
 
 """
-    setup_bcs(dh::DofHandler)
+    setup_bcs(dh::DofHandler; period=2π)
 
 Set the periodic boundary condition ("left" and "right") and 
 Dirichelt boundary condition ("bottom").
+
+# Arguments
+
+- `dh`: DofHandler
+- `period`: the period of the periodic cell, see [`periodic_cell`](@ref)
 """
-function setup_bcs(dh::DofHandler)
+function setup_bcs(dh::DofHandler; period=2π)
     cst = ConstraintHandler(dh)
     
     # Periodic boundary condition
-    pfacets = collect_periodic_facets(dh.grid, "right", "left", x -> x + Vec{2}((2π, 0.0)))
+    pfacets = collect_periodic_facets(dh.grid, "right", "left", x -> x + Vec{2}((period, 0.0)))
     pbc = PeriodicDirichlet(:u, pfacets)
     add!(cst, pbc)
     

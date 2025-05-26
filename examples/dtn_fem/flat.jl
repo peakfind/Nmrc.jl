@@ -16,13 +16,13 @@ N = 10
 height = 2.0
 
 # Generate the mesh in a periodic cell
-grid = periodic_cell(0.1; height=height)
+grid = periodic_cell(lc=0.1, period=2π, height=height)
 
 ## Set up fevalues(CellValues and FacetValues), DofHandler, and ConstraintHandler
 ip = Lagrange{RefTriangle, 1}() 
 cv, fv = setup_vals(ip) 
 dh = setup_dh(grid, ip)
-cst = setup_bcs(dh)
+cst = setup_bcs(dh; period=2π)
 
 ## Allocate the stiffness matrix A, the TBC matrix F and the load vector f 
 # Extract dofs on the "top" boundary
