@@ -30,6 +30,9 @@ export dofs_on_dtn, setup_bcs, allocate_stiff_matrix
 export assemble_A, assemble_load, assemble_tbc
 export sub_preserve_structure
 
+include("fem/fem_qep.jl")
+export assemble_A0, assemble_A1, assemble_A2
+
 # Quadratic eigenvalue problem solver
 include("quadeig.jl")
 export get_scaling_factors, compute_scaling
