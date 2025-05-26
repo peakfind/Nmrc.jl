@@ -18,12 +18,12 @@ export get_wavenumber, get_alpha, get_beta
 export beta_n
 
 # FEM routines
-include("fem/setups.jl")
+include("fem/fem_pml.jl")
 export setup_grid, setup_fevs, setup_dofs
 export setup_bdcs, allocate_matrices
-export assemble_A2, assemble_A1, assemble_A0, apply_all_bds!
+export assemble_pml_A2, assemble_pml_A1, assemble_pml_A0, apply_all_bds!
 
-include("fem/dtn.jl")
+include("fem/fem_dtn.jl")
 export periodic_cell
 export setup_vals, setup_dh
 export dofs_on_dtn, setup_bcs, allocate_stiff_matrix

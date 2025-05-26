@@ -159,11 +159,22 @@ function allocate_matrices(dof::DofHandler, cst::ConstraintHandler)
 end
 
 """
-    assemble_A2(cv::CellValues, dh::DofHandler, A₂::SparseMatrixCSC, p::PML)
+    assemble_pml_A2(cv::CellValues, dh::DofHandler, A₂::SparseMatrixCSC, p::PML)
 
-Assemble the second order term in the quadratic eigenvalue problem.
+Assemble the second order term in the quadratic eigenvalue problem from the PML-FEM method.
+
+``A_{2}(u, v) = \\int s(x_{2}) u \\bar{v} dx.``
+
+# Arguments
+
+- `cv`: CellValues
+- `dh`: DofHandler
+- `A₂`: Sparse matix preallocated for A₂
+- `p`: the information about PML, see [`PML`](@ref)
+
+See also [`assemble_pml_A0`](@ref), [`assemble_pml_A1`](@ref).
 """
-function assemble_A2(cv::CellValues, dh::DofHandler, A₂::SparseMatrixCSC, p::PML)
+function assemble_pml_A2(cv::CellValues, dh::DofHandler, A₂::SparseMatrixCSC, p::PML)
     # Allocate the local stiffness matrix
     n_basefuncs = getnbasefunctions(cv)
     Ae = zeros(ComplexF64, n_basefuncs, n_basefuncs)
@@ -204,11 +215,22 @@ function assemble_A2(cv::CellValues, dh::DofHandler, A₂::SparseMatrixCSC, p::P
 end
 
 """
-    assemble_A1(cv::CellValues, dh::DofHandler, A₁::SparseMatrixCSC, p::PML)
+    assemble_pml_A1(cv::CellValues, dh::DofHandler, A₁::SparseMatrixCSC, p::PML)
 
-Assemble the first order term in the quadratic eigenvalue problem.
+Assemble the first order term in the quadratic eigenvalue problem constructed by PML-FEM.
+
+``A_{1}(u, v) = -\\int 2i s(x_{2}) \\frac{\\partial u}{\\partial x_{1}} \\bar{v} dx.``
+
+# Arguments
+
+- `cv`: CellValues
+- `dh`: DofHandler
+- `A₁`: Sparse matix preallocated for A₁
+- `p`: the information about PML, see [`PML`](@ref)
+
+See also [`assemble_pml_A0`](@ref), [`assemble_pml_A2`](@ref).
 """
-function assemble_A1(cv::CellValues, dh::DofHandler, A₁::SparseMatrixCSC, p::PML)
+function assemble_pml_A1(cv::CellValues, dh::DofHandler, A₁::SparseMatrixCSC, p::PML)
     # Allocate the local stiffness matrix
     n_basefuncs = getnbasefunctions(cv)
     Ae = zeros(ComplexF64, n_basefuncs, n_basefuncs)
@@ -249,11 +271,24 @@ function assemble_A1(cv::CellValues, dh::DofHandler, A₁::SparseMatrixCSC, p::P
 end
 
 """
-    assemble_A0(cv, dh, A₀, medium, p, k)
+    assemble_pml_A0(cv::CellValues, dh::DofHandler, A₀::SparseMatrixCSC, medium::Function, p::PML, k)
 
-Assemble the zero order term in the quadratic eigenvalue problem.
+Assemble the zero order term in the quadratic eigenvalue problem constructed by PML-FEM.
+
+``A_{0}(u, v) = \\int s(x_{2}) \\frac{\\partial u}{\\partial x_{1}} \\frac{\\partial \\bar{v}}{\\partial x_{1}} + \\frac{1}{s(x_{2})} \\frac{\\partial u}{\\partial x_{2}} \\frac{\\partial \\bar{v}}{\\partial x_{2}} - k^{2} n(x_{1}, x_{2}) s(x_{2}) u \\bar{v} dx.``
+
+# Arguments
+
+- `cv`: CellValues
+- `dh`: DofHandler
+- `A₀`: Sparse matix preallocated for A₀
+- `medium`: the refractive index
+- `p`: the information about PML, see [`PML`](@ref)
+- `k`: the wavenumber
+
+See also [`assemble_pml_A1`](@ref), [`assemble_pml_A2`](@ref).
 """
-function assemble_A0(cv::CellValues, dh::DofHandler, A₀::SparseMatrixCSC, medium::Function, p::PML, k)
+function assemble_pml_A0(cv::CellValues, dh::DofHandler, A₀::SparseMatrixCSC, medium::Function, p::PML, k)
     # Allocate the local stiffness matrix
     n_basefuncs = getnbasefunctions(cv)
     Ae = zeros(ComplexF64, n_basefuncs, n_basefuncs)

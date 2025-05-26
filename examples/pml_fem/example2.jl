@@ -41,9 +41,9 @@ A₁ = allocate_matrices(dh, cst)
 A₂ = allocate_matrices(dh, cst)
 
 # Assemble A₀, A₁, A₂
-A₀ = assemble_A0(cv, dh, A₀, medium, p, k)
-A₁ = assemble_A1(cv, dh, A₁, p)
-A₂ = assemble_A2(cv, dh, A₂, p)
+A₀ = assemble_pml_A0(cv, dh, A₀, medium, p, k)
+A₁ = assemble_pml_A1(cv, dh, A₁, p)
+A₂ = assemble_pml_A2(cv, dh, A₂, p)
 
 # Impose the boundary conditions
 apply_all_bds!(A₀, cst)
