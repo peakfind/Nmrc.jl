@@ -42,7 +42,7 @@ height = 2.0;
 # (0.0, 2.0)$.
 
 ## Generate the mesh in a periodic cell
-grid = periodic_cell(0.1; height=height)
+grid = periodic_cell(lc=0.1, period=2π, height=height)
 
 # ### Setting up finite element space and boundary conditions
 
@@ -59,7 +59,7 @@ dh = setup_dh(grid, ip)
 # the information of the boundary conditions. In this tutorial, we impose the Dirichelt 
 # boundary condition on the lower boundary and the periodic boundary condition on the 
 # left and right boundaries.
-cst = setup_bcs(dh)
+cst = setup_bcs(dh; period=2π)
 
 # ### Assembling the stiffness matrix
 
