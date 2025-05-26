@@ -19,6 +19,8 @@ makedocs(;
     ),
     pages=[
         "Home" => "index.md",
+        "FEM-PML" => "fem_pml.md",
+        "FEM-DtN" => "fem_dtn.md",
         "Tutorials" => "flat.md",
         "API" => "api.md",
     ],
