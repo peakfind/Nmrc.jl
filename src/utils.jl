@@ -1,11 +1,11 @@
 """
-    my_sqrt(z::Complex{T}) where T<:AbstractFloat
+    csqrt_negimag(z::Complex{T}) where T<:AbstractFloat
 
 Square root for complex numbers which takes the negative imaginary axis as the branch cut.
 Note that `sqrt` for complex number in julia takes the negative real axis as the default
 branch cut.
 """
-function my_sqrt(z::Complex{T}) where T<:AbstractFloat
+function csqrt_negimag(z::Complex{T}) where T<:AbstractFloat
     # Handle special case of zero input 
     if z == zero(z)
         return zero(z)
@@ -27,7 +27,7 @@ function my_sqrt(z::Complex{T}) where T<:AbstractFloat
 end
 
 # Convenience method for other number types
-my_sqrt(z::Complex) = my_sqrt(float(z))
+csqrt_negimag(z::Complex) = csqrt_negimag(float(z))
 
 """
     integral_uv(cv::CellValues, dh::DofHandler, u, v)
