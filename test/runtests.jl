@@ -1,6 +1,6 @@
 using Nmrc
 using Test
 
-@testset "Nmrc.jl" begin
-    # Write your tests here.
+@testset "Square root" begin
+    include("test_squareroot.jl")
 end
