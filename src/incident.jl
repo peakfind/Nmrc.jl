@@ -44,7 +44,7 @@ end
 """
     beta_n(inc::Incident, n)
 
-Compute the `βₙ`.
+Compute the ``βₙ``.
 """
 function beta_n(inc::Incident, n)
     k = get_wavenumber(inc)

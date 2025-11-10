@@ -162,8 +162,9 @@ end
     assemble_pml_A2(cv::CellValues, dh::DofHandler, A₂::SparseMatrixCSC, p::PML)
 
 Assemble the second order term in the quadratic eigenvalue problem from the PML-FEM method.
-
-``A_{2}(u, v) = \\int s(x_{2}) u \\bar{v} dx.``
+```math
+A_{2}(u, v) = \\int s(x_{2}) u \\bar{v} dx.
+```
 
 # Arguments
 
@@ -218,8 +219,9 @@ end
     assemble_pml_A1(cv::CellValues, dh::DofHandler, A₁::SparseMatrixCSC, p::PML)
 
 Assemble the first order term in the quadratic eigenvalue problem constructed by PML-FEM.
-
-``A_{1}(u, v) = -\\int 2i s(x_{2}) \\frac{\\partial u}{\\partial x_{1}} \\bar{v} dx.``
+```math
+A_{1}(u, v) = -\\int 2i s(x_{2}) \\frac{\\partial u}{\\partial x_{1}} \\bar{v} dx.
+```
 
 # Arguments
 
@@ -274,8 +276,9 @@ end
     assemble_pml_A0(cv::CellValues, dh::DofHandler, A₀::SparseMatrixCSC, medium::Function, p::PML, k)
 
 Assemble the zero order term in the quadratic eigenvalue problem constructed by PML-FEM.
-
-``A_{0}(u, v) = \\int s(x_{2}) \\frac{\\partial u}{\\partial x_{1}} \\frac{\\partial \\bar{v}}{\\partial x_{1}} + \\frac{1}{s(x_{2})} \\frac{\\partial u}{\\partial x_{2}} \\frac{\\partial \\bar{v}}{\\partial x_{2}} - k^{2} n(x_{1}, x_{2}) s(x_{2}) u \\bar{v} dx.``
+```math
+A_{0}(u, v) = \\int s(x_{2}) \\frac{\\partial u}{\\partial x_{1}} \\frac{\\partial \\bar{v}}{\\partial x_{1}} + \\frac{1}{s(x_{2})} \\frac{\\partial u}{\\partial x_{2}} \\frac{\\partial \\bar{v}}{\\partial x_{2}} - k^{2} n(x_{1}, x_{2}) s(x_{2}) u \\bar{v} dx.
+```
 
 # Arguments
 

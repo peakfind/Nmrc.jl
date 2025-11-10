@@ -292,8 +292,8 @@ end
 """
     compute_coef!(fv::FacetValues, dh::DofHandler, θ::SparseVector, facetset, n)
 
-Compute Θⁿ on the `facetset`. Actually the computation of the TBC matrix reduces 
-to the computation of the vector Θⁿ.
+Compute ``\\Theta^{n}`` on the `facetset`. Actually the computation of the TBC matrix reduces 
+to the computation of the vector ``\\Theta^{n}``.
 """
 function compute_coef!(fv::FacetValues, dh::DofHandler, facetset, Θ::SparseVector, n)
     # Allocate the local vector θ
