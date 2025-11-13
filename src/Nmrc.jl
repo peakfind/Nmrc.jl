@@ -40,6 +40,6 @@ export get_scaling_factors, compute_scaling
 # Utils
 include("utils.jl")
 export csqrt_negimag
-export integral_uv̄, integral_nuv̄, integral_∂₁uv̄
+export integral_uv, integral_∂₁uv, integral_uv̄, integral_nuv̄, integral_∂₁uv̄
 
 end
