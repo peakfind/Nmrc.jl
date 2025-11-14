@@ -30,6 +30,21 @@ end
 csqrt_negimag(z::Complex) = csqrt_negimag(float(z))
 
 """
+    beta_n(k, α, n)
+
+Compute ``\\beta_{n}`` for complex ``\\alpha``. We need this function when 
+we construct nonlinear eigenvalue problems. Please note that we take the 
+negative imaginary axis as the branch cut for square root. So we use `csqrt_negimag`  
+instead of the default square root in Julia. See also [`csqrt_negimag`](@ref).
+"""
+function beta_n(k, α, n)
+    αₙ = α + complex(n)
+    βₙ = csqrt_negimag(complex(k)^2 - αₙ^2)
+    
+    return βₙ
+end
+
+"""
     integral_uv(cv::CellValues, dh::DofHandler, u, v)
 
 Compute the integral 
