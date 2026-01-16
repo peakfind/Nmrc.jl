@@ -81,29 +81,29 @@ u = A\f
 
 # Apply the boundary condition again
 apply!(u, cst)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">1574-element Vector{ComplexF64}:
-   3.158683268810116e-5 - 0.15317244858344584im
-  1.7158948105089617e-5 - 0.09651732153593437im
-    3.79994723326924e-5 - 0.20674399138797583im
- -2.5584384023723487e-5 - 0.09624018671542418im
-  -5.393305399234056e-5 - 0.20446036151544966im
- -4.0360981259559305e-5 - 0.15296601009255503im
- 0.00010349732894413891 - 0.18883980316651755im
-   4.906580304024992e-5 - 0.08636434114583684im
-  4.5931041288458144e-5 - 0.08636330998468002im
-   5.562684550090564e-5 - 1.6827193257988013im
+   3.158683268829878e-5 - 0.15317244858344609im
+  1.7158948105234286e-5 - 0.09651732153593455im
+  3.7999472332991716e-5 - 0.20674399138797625im
+  -2.558438402389051e-5 - 0.0962401867154244im
+   -5.39330539926891e-5 - 0.20446036151545022im
+ -4.0360981259799916e-5 - 0.1529660100925555im
+ 0.00010349732894383302 - 0.18883980316651797im
+   4.906580304011751e-5 - 0.08636434114583706im
+   4.593104128832029e-5 - 0.08636330998468018im
+   5.562684550261705e-5 - 1.6827193257988011im
                         ⋮
-  -0.010124949146285431 - 1.682889105761293im
-   0.001299890206179951 - 1.6419189991224463im
+  -0.010124949146284036 - 1.6828891057612945im
+   0.001299890206181199 - 1.6419189991224474im
                     0.0 + 0.0im
                     0.0 + 0.0im
-   5.812820521565083e-5 - 0.23554401819482904im
-  -3.317216149964981e-5 - 0.14140319196319232im
- 0.00016500884652190343 - 0.22843204821949303im
-  0.0003688976164628844 - 0.49466242858564047im
-  0.0002486683289360293 - 0.32632210400148437im</code></pre><h3 id="Export-the-VTK"><a class="docs-heading-anchor" href="#Export-the-VTK">Export the VTK</a><a id="Export-the-VTK-1"></a><a class="docs-heading-anchor-permalink" href="#Export-the-VTK" title="Permalink"></a></h3><p>Finally, we write the real part and imaginary part of the solution into vtk files which can be visualized by Paraview.</p><pre><code class="language-julia hljs">VTKGridFile(&quot;real_u&quot;, grid) do vtk
+  5.8128205215918596e-5 - 0.23554401819482904im
+   -3.31721614998968e-5 - 0.14140319196319248im
+  0.0001650088465218793 - 0.22843204821949378im
+ 0.00036889761646355325 - 0.49466242858564186im
+  0.0002486683289363329 - 0.3263221040014854im</code></pre><h3 id="Export-the-VTK"><a class="docs-heading-anchor" href="#Export-the-VTK">Export the VTK</a><a id="Export-the-VTK-1"></a><a class="docs-heading-anchor-permalink" href="#Export-the-VTK" title="Permalink"></a></h3><p>Finally, we write the real part and imaginary part of the solution into vtk files which can be visualized by Paraview.</p><pre><code class="language-julia hljs">VTKGridFile(&quot;real_u&quot;, grid) do vtk
    write_solution(vtk, dh, real.(u))
 end;
 
 VTKGridFile(&quot;imag_u&quot;, grid) do vtk
     write_solution(vtk, dh, imag.(u))
-end;</code></pre><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../fem_dtn/">« FEM-DtN</a><a class="docs-footer-nextpage" href="../api/">API »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.16.0 on <span class="colophon-date" title="Friday 14 November 2025 13:47">Friday 14 November 2025</span>. Using Julia version 1.12.1.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+end;</code></pre><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../fem_dtn/">« FEM-DtN</a><a class="docs-footer-nextpage" href="../api/">API »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.16.1 on <span class="colophon-date" title="Friday 16 January 2026 09:17">Friday 16 January 2026</span>. Using Julia version 1.12.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
