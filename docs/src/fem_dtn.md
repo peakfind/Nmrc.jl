@@ -8,11 +8,11 @@ boundary conditon on the artificial boundary which truncates the unbounded domai
 
 ## DtN map and transparent boundary condition
 
-The DtN map is defined on the exterior domain ``G_{b} = \\{(x_{1}, x_{2}) \\in \\mathbb{R}^{2} : x_{1} \\in (0, p) \\text{ and } x_{2} \\in (b, +\\infty) \\}`` 
-with boundary ``\\Gamma_{b} = \\{(x_{1}, x_{2}) \\in \\mathbb{R}^{2} : x_{2} = b\\}``. The mapping ``T`` 
-takes Dirichlet value ``f \\in C^{\\infty}`` to the corresponding Neumann value ``Tf = \\frac{\\partial v}{\\partial n}\\vert_{\\Gamma_{b}}``, 
+The DtN map is defined on the exterior domain ``G_{b} = \{(x_{1}, x_{2}) \in \mathbb{R}^{2} : x_{1} \in (0, p) \text{ and } x_{2} \in (b, +\infty) \}`` 
+with boundary ``\Gamma_{b} = \{(x_{1}, x_{2}) \in \mathbb{R}^{2} : x_{2} = b\}``. The mapping ``T`` 
+takes Dirichlet value ``f \in C^{\infty}`` to the corresponding Neumann value ``Tf = \frac{\partial v}{\partial x_{2}}\vert_{\Gamma_{b}}``, 
 where ``v`` is the solution to the Helmholtz equation in ``G_{b}`` satisfying the Dirichlet 
-boundary condition ``v = f`` on ``\\Gamma_{b}`` and the Rayleigh expansion radiation condition. We 
+boundary condition ``v = f`` on ``\Gamma_{b}`` and the Rayleigh expansion radiation condition. We 
 conclude the following boundary value problem
 ```math
 \begin{equation*}
