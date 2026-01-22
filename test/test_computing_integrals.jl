@@ -3,25 +3,30 @@ using Ferrite
 function construct_fespace(n)
     # Generate the grid
     grid = generate_grid(Triangle, (n, n))
+    top = getfacetset(grid, "top")
     
     # Use P1 element
     ip = Lagrange{RefTriangle, 1}()
     
     # Define the quadrature rule
     qr = QuadratureRule{RefTriangle}(2)
-    
+    qr_facet = FacetQuadratureRule{RefTriangle}(3)
+
     # Construct CellValues
     cv = CellValues(qr, ip)
+    
+    # Construct FacetValues
+    fv = FacetValues(qr_facet, ip)
     
     # Construct DofHandler
     dh = DofHandler(grid)
     add!(dh, :u, ip)
     close!(dh)
     
-    return cv, dh
+    return cv, fv, dh, top
 end
 
-cv, dh = construct_fespace(1000)
+cv, fv, dh, top = construct_fespace(1000)
 
 @testset "Integrate the production of u and v" begin
     u = ones(ndofs(dh))
@@ -70,4 +75,13 @@ end
     rst = integral_∂₁uv̄(cv, dh, u, v)
     
     @test rst ≈ 0.0 + 0.0im atol=1e-10
+end
+
+@testset "Compute the Rayleigh coefficients" begin
+    u = ones(ndofs(dh))
+    
+    # 0-th order
+    rst = compute_rayleigh_n(fv, dh, top, u, 0)
+    
+    @test rst ≈ 2.0 atol=1e-12
 end
