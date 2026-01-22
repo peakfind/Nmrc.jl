@@ -237,3 +237,32 @@ function integral_∂₁uv̄(cv::CellValues, dh::DofHandler, u, v)
     
     return rst
 end
+
+"""
+    compute_rayleigh_n(fv::FacetValues, dh::DofHandler, facetset, u, n)
+
+Compute the ``n``-th order Rayleigh coefficient for the solution ``u``. Be careful that 
+we need to compute the Rayleigh coefficients for scattered solutions. 
+```math
+u_{n} = \\int_{\\text{boundary}} u e^{-inx_{1}} ds.
+```
+"""
+function compute_rayleigh_n(fv::FacetValues, dh::DofHandler, facetset, u, n)
+    rst = zero(eltype(u))
+    
+    for facet in FacetIterator(dh, facetset)
+        reinit!(fv, facet)
+        cd = celldofs(facet)
+        coords = getcoordinates(facet)
+        
+        for qp in 1:getnquadpoints(fv)
+            ds = getdetJdV(fv, qp)
+            coords_qp = spatial_coordinate(fv, qp, coords)
+            e = exp(-im * n * coords_qp[1])
+            u_qp = function_value(fv, qp, u, cd)
+            rst += u_qp * e * ds
+        end
+    end
+    
+    return rst
+end
