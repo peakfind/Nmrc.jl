@@ -257,11 +257,11 @@ function assemble_load(fv::FacetValues, dh::DofHandler, facetset, f, inc::Incide
 end
 
 """
-    assemble_tbc(fv::FacetValues, dh::DofHandler, inc::Incident, F::SparseMatrixCSC, facetset, N, dofsDtN)
+    assemble_tbc(fv::FacetValues, dh::DofHandler, inc::Incident, facetset, F, N, dofsDtN; period = 2π)
 
 Assemble the TBC matrix.
 """
-function assemble_tbc(fv::FacetValues, dh::DofHandler, inc::Incident, facetset, F, N, dofsDtN)
+function assemble_tbc(fv::FacetValues, dh::DofHandler, inc::Incident, facetset, F, N, dofsDtN; period = 2π)
     # Allocate the vector Θ 
     Θ = sparsevec(dofsDtN, zeros(ComplexF64, length(dofsDtN)), ndofs(dh))
 
@@ -271,14 +271,14 @@ function assemble_tbc(fv::FacetValues, dh::DofHandler, inc::Incident, facetset, 
         fill!(Θ, 0.0 + 0.0im)
 
         # Compute βₙ
-        βₙ = beta_n(inc, n)
+        βₙ = beta_n(inc, n; period = period)
 
         # Compute the vector Θ (Fourier coefficients and its conjugate) 
-        compute_coef!(fv, dh, facetset, Θ, n)
+        compute_coef!(Θ, fv, dh, facetset, n; period = period)
         
         # Assemble the TBC matrix 
         for i in Θ.nzind, j in Θ.nzind
-            v = im * βₙ * Θ[i] * conj(Θ[j])/(2π)
+            v = im * βₙ * Θ[i] * conj(Θ[j]) / period
             Ferrite.addindex!(F, v, i, j)
         end
     end
@@ -290,15 +290,18 @@ function assemble_tbc(fv::FacetValues, dh::DofHandler, inc::Incident, facetset, 
 end
 
 """
-    compute_coef!(fv::FacetValues, dh::DofHandler, θ::SparseVector, facetset, n)
+    compute_coef!(Θ::SparseVector, fv::FacetValues, dh::DofHandler, facetset, n; period = 2π)
 
 Compute ``\\Theta^{n}`` on the `facetset`. Actually the computation of the TBC matrix reduces 
 to the computation of the vector ``\\Theta^{n}``.
 """
-function compute_coef!(fv::FacetValues, dh::DofHandler, facetset, Θ::SparseVector, n)
+function compute_coef!(Θ::SparseVector, fv::FacetValues, dh::DofHandler, facetset, n; period = 2π)
     # Allocate the local vector θ
     n_basefuncs = getnbasefunctions(fv)
     θ = zeros(ComplexF64, n_basefuncs)
+    
+    # precompute constant
+    c = (im * 2π * n) / period
     
     # Loop over all facets on the specific facetset
     for facet in FacetIterator(dh, facetset)
@@ -317,8 +320,8 @@ function compute_coef!(fv::FacetValues, dh::DofHandler, facetset, Θ::SparseVect
             # Coordinate of the quadrature point
             coords_qp = spatial_coordinate(fv, qp, coords)
             
-            # Modes: eⁱⁿˣ
-            mode = exp(im * n * coords_qp[1])
+            # Modes: exp(im * 2π * n * x1 / period)
+            mode = exp(c * coords_qp[1])
             
             for i in 1:n_basefuncs
                 ϕ = shape_value(fv, qp, i)

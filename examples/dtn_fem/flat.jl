@@ -15,14 +15,17 @@ inc = Incident(k, θ)
 N = 10
 height = 2.0
 
+# Periodicity
+p = 2π
+
 # Generate the mesh in a periodic cell
-grid = periodic_cell(lc=0.1, period=2π, height=height)
+grid = periodic_cell(lc = 0.1, period = p, height=height)
 
 ## Set up fevalues(CellValues and FacetValues), DofHandler, and ConstraintHandler
 ip = Lagrange{RefTriangle, 1}() 
 cv, fv = setup_vals(ip) 
 dh = setup_dh(grid, ip)
-cst = setup_bcs(dh; period=2π)
+cst = setup_bcs(dh; period = p)
 
 ## Allocate the stiffness matrix A, the TBC matrix F and the load vector f 
 # Extract dofs on the "top" boundary
@@ -41,7 +44,7 @@ A = assemble_A(cv, dh, A, inc)
 f = assemble_load(fv, dh, top, f, inc, height)
 
 # Assemble the TBC matrix
-F = assemble_tbc(fv, dh, inc, top, F, N, dofsDtN)
+F = assemble_tbc(fv, dh, inc, top, F, N, dofsDtN; period = p)
 
 # Add the TBC matrix to A: A - F
 A = sub_preserve_structure(A, F)
