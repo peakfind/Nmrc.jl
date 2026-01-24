@@ -64,3 +64,9 @@ end;
 VTKGridFile("imag_u", grid) do vtk
     write_solution(vtk, dh, imag.(u)) 
 end;
+
+# Compute the efficiency to verify our code
+β = get_beta(inc)
+
+u0 = compute_rayleigh_n(fv, dh, top, u, 0; period = p) / p
+e0 = abs(u0 - exp(-im * β * height))^2
