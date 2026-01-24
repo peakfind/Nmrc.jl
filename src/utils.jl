@@ -247,8 +247,11 @@ we need to compute the Rayleigh coefficients for scattered solutions.
 u_{n} = \\int_{\\text{boundary}} u e^{-inx_{1}} ds.
 ```
 """
-function compute_rayleigh_n(fv::FacetValues, dh::DofHandler, facetset, u, n)
+function compute_rayleigh_n(fv::FacetValues, dh::DofHandler, facetset, u, n; period = 2π)
     rst = zero(eltype(u))
+    
+    # precompute constants 
+    c = (-im * 2π * n) / period
     
     for facet in FacetIterator(dh, facetset)
         reinit!(fv, facet)
@@ -258,7 +261,7 @@ function compute_rayleigh_n(fv::FacetValues, dh::DofHandler, facetset, u, n)
         for qp in 1:getnquadpoints(fv)
             ds = getdetJdV(fv, qp)
             coords_qp = spatial_coordinate(fv, qp, coords)
-            e = exp(-im * n * coords_qp[1])
+            e = exp(c * coords_qp[1])
             u_qp = function_value(fv, qp, u, cd)
             rst += u_qp * e * ds
         end
