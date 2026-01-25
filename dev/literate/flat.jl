@@ -36,13 +36,16 @@ N = 10;
 ## Height of the artificial boundary
 height = 2.0;
 
+## Periodicity
+p = 2π
+
 # ### Generating a mesh by Gmsh
 
 # We generate a mesh on a periodic cell which is a rectangle $(0.0, 2\pi) \times 
 # (0.0, 2.0)$.
 
 ## Generate the mesh in a periodic cell
-grid = periodic_cell(lc=0.1, period=2π, height=height)
+grid = periodic_cell(lc = 0.1, period = p, height = height)
 
 # ### Setting up finite element space and boundary conditions
 
@@ -59,7 +62,7 @@ dh = setup_dh(grid, ip)
 # the information of the boundary conditions. In this tutorial, we impose the Dirichelt 
 # boundary condition on the lower boundary and the periodic boundary condition on the 
 # left and right boundaries.
-cst = setup_bcs(dh; period=2π)
+cst = setup_bcs(dh; period = p)
 
 # ### Assembling the stiffness matrix
 
@@ -86,7 +89,7 @@ f = assemble_load(fv, dh, top, f, inc, height)
 A = assemble_A(cv, dh, A, inc)
 
 ## Assemble the TBC matrix
-F = assemble_tbc(fv, dh, inc, top, F, N, dofsDtN)
+F = assemble_tbc(fv, dh, inc, top, F, N, dofsDtN; period = p)
 
 # Be careful! Calculations between two sparse matrices may destory the structure 
 # of sparse matrices. Then imposing the boundary condition may fail. So we use 
@@ -117,3 +120,8 @@ end;
 VTKGridFile("imag_u", grid) do vtk
     write_solution(vtk, dh, imag.(u)) 
 end;
+
+# ### Efficiency
+β = get_beta(inc)
+u0 = compute_rayleigh_n(fv, dh, top, u, 0; period = p) / p
+e0 = abs(u0 - exp(-im * β * height))^2
