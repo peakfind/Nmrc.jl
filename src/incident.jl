@@ -42,14 +42,14 @@ function get_beta(inc::Incident)
 end
 
 """
-    beta_n(inc::Incident, n)
+    beta_n(inc::Incident, n; period = 2π)
 
 Compute the ``βₙ``.
 """
-function beta_n(inc::Incident, n)
+function beta_n(inc::Incident, n; period = 2π)
     k = get_wavenumber(inc)
     α = get_alpha(inc)
-    αₙ = α + n
+    αₙ = α + (2π * n) / period
     
     if k > abs(αₙ)
         βₙ = complex(sqrt(k^2 - αₙ^2))

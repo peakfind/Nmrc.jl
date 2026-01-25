@@ -81,7 +81,11 @@ end
     u = ones(ndofs(dh))
     
     # 0-th order
-    rst = compute_rayleigh_n(fv, dh, top, u, 0)
+    rst0 = compute_rayleigh_n(fv, dh, top, u, 0; period = 2.0)
     
-    @test rst ≈ 2.0 atol=1e-12
+    # 1-th order
+    rst1 = compute_rayleigh_n(fv, dh, top, u, 1; period = 2.0)
+    
+    @test rst0 ≈ 2.0 atol=1e-12
+    @test rst1 ≈ 0.0 atol=1e-15
 end
