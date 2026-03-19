@@ -84,26 +84,26 @@ u = A\f
 
 # Apply the boundary condition again
 apply!(u, cst)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">1574-element Vector{ComplexF64}:
-   3.158683268829878e-5 - 0.15317244858344609im
-  1.7158948105234286e-5 - 0.09651732153593455im
-  3.7999472332991716e-5 - 0.20674399138797625im
-  -2.558438402389051e-5 - 0.0962401867154244im
-   -5.39330539926891e-5 - 0.20446036151545022im
- -4.0360981259799916e-5 - 0.1529660100925555im
- 0.00010349732894383302 - 0.18883980316651797im
-   4.906580304011751e-5 - 0.08636434114583706im
-   4.593104128832029e-5 - 0.08636330998468018im
-   5.562684550261705e-5 - 1.6827193257988011im
+   3.158683268813021e-5 - 0.15317244858344609im
+  1.7158948105115173e-5 - 0.09651732153593455im
+    3.79994723327419e-5 - 0.20674399138797625im
+  -2.558438402400812e-5 - 0.09624018671542417im
+ -5.3933053992944325e-5 - 0.20446036151544977im
+  -4.036098126000437e-5 - 0.15296601009255517im
+ 0.00010349732894396636 - 0.18883980316651783im
+    4.90658030401782e-5 - 0.08636434114583698im
+   4.593104128837738e-5 - 0.08636330998468013im
+  5.5626845500767326e-5 - 1.682719325798799im
                         ⋮
-  -0.010124949146284036 - 1.6828891057612945im
-   0.001299890206181199 - 1.6419189991224474im
+  -0.010124949146284718 - 1.6828891057612916im
+  0.0012998902061806645 - 1.641918999122445im
                     0.0 + 0.0im
                     0.0 + 0.0im
-  5.8128205215918596e-5 - 0.23554401819482904im
-   -3.31721614998968e-5 - 0.14140319196319248im
-  0.0001650088465218793 - 0.22843204821949378im
- 0.00036889761646355325 - 0.49466242858564186im
-  0.0002486683289363329 - 0.3263221040014854im</code></pre><h3 id="Export-the-VTK"><a class="docs-heading-anchor" href="#Export-the-VTK">Export the VTK</a><a id="Export-the-VTK-1"></a><a class="docs-heading-anchor-permalink" href="#Export-the-VTK" title="Permalink"></a></h3><p>Finally, we write the real part and imaginary part of the solution into vtk files which can be visualized by Paraview.</p><pre><code class="language-julia hljs">VTKGridFile(&quot;real_u&quot;, grid) do vtk
+  5.8128205215717313e-5 - 0.23554401819482865im
+ -3.3172161500041374e-5 - 0.14140319196319218im
+ 0.00016500884652199336 - 0.2284320482194935im
+ 0.00036889761646351053 - 0.4946624285856409im
+ 0.00024866832893638433 - 0.3263221040014849im</code></pre><h3 id="Export-the-VTK"><a class="docs-heading-anchor" href="#Export-the-VTK">Export the VTK</a><a id="Export-the-VTK-1"></a><a class="docs-heading-anchor-permalink" href="#Export-the-VTK" title="Permalink"></a></h3><p>Finally, we write the real part and imaginary part of the solution into vtk files which can be visualized by Paraview.</p><pre><code class="language-julia hljs">VTKGridFile(&quot;real_u&quot;, grid) do vtk
    write_solution(vtk, dh, real.(u))
 end;
 
@@ -111,4 +111,4 @@ VTKGridFile(&quot;imag_u&quot;, grid) do vtk
     write_solution(vtk, dh, imag.(u))
 end;</code></pre><h3 id="Efficiency"><a class="docs-heading-anchor" href="#Efficiency">Efficiency</a><a id="Efficiency-1"></a><a class="docs-heading-anchor-permalink" href="#Efficiency" title="Permalink"></a></h3><pre><code class="language-julia hljs">β = get_beta(inc)
 u0 = compute_rayleigh_n(fv, dh, top, u, 0; period = p) / p
-e0 = abs(u0 - exp(-im * β * height))^2</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">0.9999998529266859</code></pre><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../fem_dtn/">« FEM-DtN</a><a class="docs-footer-nextpage" href="../api/">API »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.16.1 on <span class="colophon-date" title="Tuesday 27 January 2026 03:08">Tuesday 27 January 2026</span>. Using Julia version 1.12.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+e0 = abs(u0 - exp(-im * β * height))^2</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">0.9999998529266853</code></pre><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../fem_dtn/">« FEM-DtN</a><a class="docs-footer-nextpage" href="../api/">API »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Thursday 19 March 2026 13:42">Thursday 19 March 2026</span>. Using Julia version 1.12.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
